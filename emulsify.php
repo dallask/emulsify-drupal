@@ -412,7 +412,9 @@ function _emulsify_get_files_to_alter() {
     'emulsify.info.yml',
     'emulsify.theme',
     'emulsify.breakpoints.yml',
+    'emulsify.field_preprocessors.yml',
     'emulsify.libraries.yml',
+    'emulsify.preprocessors.yml',
   );
   // If we would like to have a bare copy we use is slim option.
   if (drush_get_option('slim') === TRUE) {
@@ -487,8 +489,10 @@ function _emulsify_get_files_to_copy() {
     'a11y.config.js',
     'babel.config.js',
     'emulsify.breakpoints.yml',
+    'emulsify.field_preprocessors.yml',
     'emulsify.info.yml',
     'emulsify.libraries.yml',
+    'emulsify.preprocessors.yml',
     'emulsify.theme',
     'jest.config.js',
     'lint-staged.config.js',
@@ -525,7 +529,9 @@ function _emulsify_get_files_to_rename() {
     'emulsify.info.yml',
     'emulsify.theme',
     'emulsify.breakpoints.yml',
+    'emulsify.preprocessors.yml',
     'emulsify.libraries.yml',
+    'emulsify.field_preprocessors.yml',
   );
   // If we would like to have a bare copy we use is slim option.
   if (drush_get_option('slim') === TRUE) {

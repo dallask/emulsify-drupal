@@ -2,9 +2,9 @@
   "project": {
     "platform": "drupal",
     "name": "Emulsify Drupal",
-    "machineName": "emulsify-drupal"
+    "machineName": "emulsify-drupal-dallask"
   },
   "starter": {
-    "repository": "https://github.com/emulsify-ds/emulsify-drupal.git"
+    "repository": "https://github.com/dallask/emulsify-drupal.git"
   }
 }

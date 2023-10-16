@@ -1,13 +1,238 @@
 global:
   css:
+    base:
+      dist/css/00-bootstrap/bootstrap.critical.css: { minified: true }
     theme:
-      dist/css/style.css: {}
-
-main-menu:
-  js:
-    dist/js/02-molecules/menus/main-menu/main-menu.js: {}
+      dist/css/global.css: { minified: true }
   dependencies:
-    - core/drupal
+    - emulsify/focus
+    - emulsify/focus.advanced
+
+modernizr:
+  js:
+    dist/js/00-base/05-libraries/modernizr-custom.js: { preprocess: 0, weight: -21 }
+
+bootstrap:
+  version: 5.1.3
+  license:
+    name: MIT
+    url: https://github.com/twbs/bootstrap/blob/main/LICENSE
+  js:
+    //cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js: { type: external, minified: true }
+
+bootstrap-local:
+  version: 5.1.3
+  remote: https://getbootstrap.com/
+  license:
+    name: MIT
+    url: https://github.com/twbs/bootstrap/blob/main/LICENSE
+  js:
+    dist/js/00-bootstrap/bootstrap.js: { minified: true }
+  css:
+    base:
+      dist/css/00-bootstrap/bootstrap.css: { minified: true }
+  dependencies:
+    - core/jquery
+    - emulsify/popper
+
+bootstrap.accordion:
+  css:
+    base:
+      dist/css/00-bootstrap/bootstrap.accordion.css: { minified: true }
+  js:
+    dist/js/00-bootstrap/bootstrap.collapse.js: { minified: true }
+  dependencies:
+    - core/jquery
+    - emulsify/bootstrap.transitions
+
+bootstrap.alert:
+  css:
+    base:
+      dist/css/00-bootstrap/bootstrap.alert.css: { minified: true }
+  js:
+    dist/js/00-bootstrap/bootstrap.alert.js: { minified: true }
+
+bootstrap.badge:
+  css:
+    base:
+      dist/css/00-bootstrap/bootstrap.badge.css: { minified: true }
+
+bootstrap.breadcrumb:
+  css:
+    component:
+      dist/css/00-bootstrap/bootstrap.breadcrumb.css: { minified: true }
+
+bootstrap.button:
+  css:
+    base:
+      dist/css/00-bootstrap/bootstrap.buttons.css: { minified: true }
+  js:
+    dist/js/00-bootstrap/bootstrap.button.js: { minified: true }
+
+bootstrap.button-group:
+  css:
+    base:
+      dist/css/00-bootstrap/bootstrap.button-group.css: { minified: true }
+
+bootstrap.card:
+  css:
+    base:
+      dist/css/00-bootstrap/bootstrap.card.css: { minified: true }
+
+bootstrap.carousel:
+  css:
+    base:
+      dist/css/00-bootstrap/bootstrap.carousel.css: { minified: true }
+  js:
+    dist/js/00-bootstrap/bootstrap.carousel.js: { minified: true }
+
+bootstrap.collapse:
+  js:
+    dist/js/00-bootstrap/bootstrap.collapse.js: { minified: true }
+
+bootstrap.close:
+  css:
+    base:
+      dist/css/00-bootstrap/bootstrap.close.css: { minified: true }
+
+bootstrap.dropdown:
+  css:
+    base:
+      dist/css/00-bootstrap/bootstrap.dropdown.css: { minified: true }
+  js:
+    dist/js/00-bootstrap/bootstrap.dropdown.js: { minified: true }
+  dependencies:
+    - emulsify/bootstrap.button
+
+bootstrap.forms:
+  css:
+    component:
+      dist/css/00-bootstrap/bootstrap.forms.css: { minified: true }
+
+bootstrap.images:
+  css:
+    base:
+      dist/css/00-bootstrap/bootstrap.images.css: { minified: true }
+
+bootstrap.list-group:
+  css:
+    base:
+      dist/css/00-bootstrap/bootstrap.list-group.css: { minified: true }
+
+bootstrap.modal:
+  css:
+    base:
+      dist/css/00-bootstrap/bootstrap.modal.css: { minified: true }
+  js:
+    dist/js/00-bootstrap/bootstrap.modal.js: { minified: true }
+  dependencies:
+    - emulsify/bootstrap.close
+
+bootstrap.nav:
+  css:
+    base:
+      dist/css/00-bootstrap/bootstrap.nav.css: { minified: true }
+      dist/css/00-bootstrap/bootstrap.navbar.css: { minified: true }
+  js:
+    dist/js/00-bootstrap/bootstrap.collapse.js: { minified: true }
+  dependencies:
+    - core/jquery
+    - emulsify/bootstrap.dropdown
+    - emulsify/bootstrap.transitions
+
+bootstrap.offcanvas:
+  css:
+    base:
+      dist/css/00-bootstrap/bootstrap.offcanvas.css: { minified: true }
+  js:
+    dist/js/00-bootstrap/bootstrap.offcanvas.js: { minified: true }
+
+bootstrap.pagination:
+  css:
+    base:
+      dist/css/00-bootstrap/bootstrap.pagination.css: { minified: true }
+
+bootstrap.placeholders:
+  css:
+    component:
+      dist/css/00-bootstrap/bootstrap.placeholders.css: { minified: true }
+
+bootstrap.popover:
+  css:
+    component:
+      dist/css/00-bootstrap/bootstrap.poprver.css: { minified: true }
+      dist/css/00-bootstrap/bootstrap.tooltip.css: { minified: true }
+  js:
+    dist/js/00-bootstrap/bootstrap.poprver.js: { minified: true }
+    dist/js/00-bootstrap/bootstrap.tooltip.js: { minified: true }
+  dependencies:
+    - emulsify/popper
+
+bootstrap.progress:
+  css:
+    base:
+      dist/css/00-bootstrap/bootstrap.progress.css: { minified: true }
+
+bootstrap.scrollspy:
+  js:
+    dist/js/00-bootstrap/bootstrap.scrollspy.js: { minified: true }
+  dependencies:
+    - emulsify/bootstrap.nav
+
+bootstrap.spinners:
+  css:
+    base:
+      dist/css/00-bootstrap/bootstrap.spinners.css: { minified: true }
+
+bootstrap.tables:
+  css:
+    base:
+      dist/css/00-bootstrap/bootstrap.tables.css: { minified: true }
+
+bootstrap.tab:
+  js:
+    dist/js/00-bootstrap/bootstrap.tab.js: { minified: true }
+  dependencies:
+    - core/jquery
+    - emulsify/bootstrap.nav
+
+bootstrap.transitions:
+  css:
+    base:
+      dist/css/00-bootstrap/bootstrap.transitions.css: { minified: true }
+
+bootstrap.toasts:
+  css:
+    component:
+      dist/css/00-bootstrap/bootstrap.toasts.css: { minified: true }
+  js:
+    dist/js/00-bootstrap/bootstrap.toasts.js: { minified: true }
+
+bootstrap.utilities:
+  css:
+    base:
+      dist/css/00-bootstrap/bootstrap.utilities.css: { minified: true }
+
+bootstrap.root:
+  css:
+    base:
+      dist/css/00-bootstrap/bootstrap.root.css: { minified: true }
+
+bootstrap.reboot:
+  css:
+    base:
+      dist/css/00-bootstrap/bootstrap.reboot.css: { minified: true }
+
+popper:
+  version: 2.14.
+  remote: https://popper.js.org/
+  license:
+    name: MIT
+    url: https://github.com/popperjs/popper-core/blob/master/LICENSE.md
+  js:
+    //unpkg.com/@popperjs/core@2: { type: external }
+  dependencies:
+    - core/jquery
 
 # IE 11 support for SVG use - disable if not needed.
 # See also components/01-atoms/images/icons/_icon.twig to remove attach_library.
@@ -16,8 +241,91 @@ sprite:
     components/01-atoms/images/icons/svgxuse.min.js:
       { attributes: { defer: true } }
 
-tabs:
+atom.tooltip:
+  css:
+    component:
+      dist/css/01-atoms/tooltips/tooltips.css: {}
   js:
-    dist/js/02-molecules/tabs/tabs.js: {}
+    dist/js/01-atoms/tooltips/tooltips.js: { }
   dependencies:
+    - emulsify/tooltipster
+
+block.isi-tray:
+  css:
+    component:
+      dist/css/06-components/block/isi-tray/isi-tray.css: { minified: true }
+
+block.eu-cookie-warning:
+  css:
+    component:
+      dist/css/06-components/block/eu_cookie_compliance_popup_info/eu_cookie_compliance_popup_info.css: { minified: true }
+  dependencies:
+    - eu_cookie_compliance/eu_cookie_compliance
+    - eu_cookie_compliance/eu_cookie_compliance_default
+    - eu_cookie_compliance/eu_cookie_compliance_bare
+
+block.external-link-popup:
+  css:
+    component:
+      dist/css/06-components/block/external-link-popup/external-link-popup.css: { minified: true }
+  js:
+    dist/js/06-components/block/external-link-popup/external-link-popup.js: { minified: true }
+  dependencies:
+    - emulsify/bootstrap.modal
+    - external_link_popup/dialog
+    - bootstrap_external_link_popup/dialog
+
+focus:
+  css:
+    component:
+      dist/css/00-base/04-focus/focus.css: { minified: true }
+  js:
+    dist/js/00-base/04-focus/focus.js: { minified: true, weight: -10 }
+
+focus.advanced:
+  js:
+    dist/js/00-base/04-focus/focus.advanced.js: { minified: true }
+  dependencies:
+    - core/jquery
     - core/drupal
+    - emulsify/focus
+
+slick:
+  version: 1.8.1
+  license:
+    name: MIT
+    url: https://github.com/kenwheeler/slick/blob/master/LICENSE
+  css:
+    component:
+      //cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.css: { type: external }
+      //cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick-theme.css: { type: external }
+  js:
+    //cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.js: { type: external }
+  dependencies:
+    - core/jquery
+
+font-awesome:
+  version: 5.15.2
+  remote: https://fontawesome.com/
+  license:
+    url: https://github.com/FortAwesome/Font-Awesome/blob/master/LICENSE.txt
+  css:
+    theme:
+      //cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css: { type: external, minified: true }
+
+tooltipster:
+  version: 4.2.8
+  remote: http://calebjacob.github.io/
+  license:
+    name: MIT
+    url: https://github.com/calebjacob/tooltipster/blob/master/LICENSE
+  css:
+    base:
+      //cdn.jsdelivr.net/npm/tooltipster@4.2.8/dist/css/tooltipster.bundle.min.css: { type: external, minified: true }
+      //cdn.jsdelivr.net/npm/tooltipster@4.2.8/dist/css/plugins/tooltipster/sideTip/themes/tooltipster-sideTip-noir.min.css: { type: external, minified: true }
+  js:
+    //cdn.jsdelivr.net/npm/tooltipster@4.2.8/dist/js/tooltipster.bundle.min.js: { type: external, minified: true }
+  dependencies:
+    - core/jquery
+
+

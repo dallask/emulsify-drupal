@@ -2,5 +2,372 @@
 
 /**
  * @file
- * Functions to support theming.
+ * Functions to support theming in the emulsify_theme theme.
  */
+
+use Drupal\node\Entity\Node;
+use Drupal\Component\Utility\Html;
+use Drupal\block_content\BlockContentInterface;
+use Drupal\block\Entity\Block;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Link;
+
+/**
+ * Implements hook_preprocess_webform().
+ */
+function emulsify_preprocess_webform(&$variables) {
+  // Attach library.
+  $library_name = 'webform.' . $variables['element']['#webform_id'];
+  _otsuka_check_and_attach_component_styles($library_name, $variables);
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for page block.
+ */
+function emulsify_preprocess_block(&$variables) {
+  if ($variables['base_plugin_id'] == 'block_content') {
+    if (!empty($variables['elements']['content']['#block_content'])) {
+      /** @var \Drupal\block_content\Entity\BlockContent $block_content */
+      $block_content = $variables['elements']['content']['#block_content'];
+      $variables['custom_block_id'] = Html::getId($block_content->label());
+      $variables['attributes']['class'][] = Html::getClass('block-content-' . $block_content->label());
+      $variables['attributes']['class'][] = Html::getClass('block-content-' . $block_content->bundle());
+      _otsuka_check_and_attach_component_styles('block.' . Html::getClass($block_content->label()), $variables);
+      _otsuka_check_and_attach_component_styles('block.' . Html::getClass($block_content->bundle()), $variables);
+    }
+  }
+
+  $variables['label_id'] = Html::getId($variables['configuration']['label']);
+  if (is_string($variables['label_id'])) {
+    _otsuka_check_and_attach_component_styles('block.' . $variables['label_id'], $variables);
+  }
+
+  // A block's label is configuration: it is static. Allow dynamic labels to be
+  // set in the render array.
+  if (isset($variables['elements']['content']['#title']) &&
+    !empty($variables['configuration']['label_display']) &&
+    is_string($variables['elements']['content']['#title'])) {
+    $variables['label_id'] = Html::getId($variables['elements']['content']['#title']);
+  }
+
+  if (isset($variables['content']['#menu_name'])) {
+    _otsuka_check_and_attach_component_styles('menu.' . Html::getClass($variables['content']['#menu_name']), $variables);
+    $variables['content']['#attributes']['block'] = $variables['attributes']['id'];
+
+    if (isset($variables["elements"]["#id"])) {
+      $block_id = $variables["elements"]["#id"];
+      $block = Block::load($block_id);
+
+      if ($block) {
+        $variables["content"]["#attributes"]["region"] = $block->getRegion();
+      }
+    }
+  }
+
+  // Add custom class to the block from the field 'field_class'.
+  $content = $variables['elements']['content'];
+  if (isset($content['#block_content']) && $content['#block_content'] instanceof BlockContentInterface) {
+    if ($content['#block_content']->hasField('field_class')) {
+      $class = $content['#block_content']->get('field_class')->value;
+      if (!empty($class)) {
+        $variables['attributes']['class'][] = Html::cleanCssIdentifier($class);
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_preprocess_paragraph().
+ */
+function emulsify_preprocess_paragraph(&$variables) {
+  // Common library.
+  _otsuka_check_and_attach_component_styles('paragraph.common', $variables);
+
+  // \Drupal::logger('ods_theme')->debug('preprocess paragraph called', []);
+  /** @var \Drupal\paragraphs\Entity\Paragraph $paragraph */
+  $paragraph = &$variables['paragraph'];
+
+  // Attach Paragraph library.
+  $library_name = 'paragraph.' . HTML::getClass($paragraph->getType());
+  _otsuka_check_and_attach_component_styles($library_name, $variables);
+
+  if ($paragraph->bundle() === 'otsk_ds_dropdown') {
+    $menuName = $paragraph->field_menu->getString();
+    if (!empty($menuName)) {
+      $menuTree = Drupal::menuTree();
+      $parameters = $menuTree->getCurrentRouteMenuTreeParameters($menuName);
+      $menuTree = $menuTree->load($menuName, $parameters);
+      $menus = [];
+      foreach ($menuTree as $menu) {
+        $menus[] = [
+          'title' => $menu->link->getTitle(),
+          'link' => $menu->link->getUrlObject(),
+        ];
+      }
+      $variables['sub_items'] = $menus;
+    }
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function emulsify_preprocess_node(&$variables) {
+  $node = $variables['node'];
+  $title = Html::getClass($node->getTitle());
+  $node_type = Html::getClass($node->getType());
+  $node_view_mode = Html::getClass($variables['view_mode']);
+  $library_names = [
+    "node.{$title}",
+    "node.{$node_type}",
+    "node.{$node_type}--{$node_view_mode}",
+  ];
+
+  foreach ($library_names as $library_name) {
+    _otsuka_check_and_attach_component_styles($library_name, $variables);
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function emulsify_preprocess_field(&$variables) {
+  $library_name = 'field.' . HTML::getClass($variables['field_name']);
+  _otsuka_check_and_attach_component_styles($library_name, $variables);
+}
+
+/**
+ * Implements hook_preprocess_region() for region.html.twig.
+ */
+function emulsify_preprocess_region(&$variables) {
+  $region_name = $variables['elements']['#region'];
+  _otsuka_check_and_attach_component_styles('region.' . Html::getClass($region_name), $variables);
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for html.html.twig.
+ */
+function emulsify_preprocess_html(array &$variables) {
+  $route_match = \Drupal::routeMatch();
+  $route_name = $route_match->getRouteName();
+  switch ($route_name) {
+    case 'system.403':
+    case 'system.404':
+      $variables['attributes']['class'][] = 'page-error';
+      $library_name = 'page.error';
+      _otsuka_check_and_attach_component_styles($library_name, $variables);
+      break;
+
+  }
+
+  // Add body classes.
+  if (_is_404_page_node()) {
+    $variables['attributes']['class'][] = 'path-error-404';
+  }
+
+  // Added body class from node field.
+  $route_match = \Drupal::routeMatch();
+  $node = $route_match->getParameter('node');
+  if ($node instanceof Node &&
+    $node->hasField('field_otsk_ds_body_class') &&
+    !$node->get('field_otsk_ds_body_class')->isEmpty()) {
+    $value = $node->get('field_otsk_ds_body_class')->getString();
+    $body_classes = explode(' ', $value);
+    foreach ($body_classes as $body_class) {
+      $variables['attributes']['class'][] = Html::cleanCssIdentifier('custom-page--' . $body_class);
+      $library_name = 'node.' . $body_class;
+      _otsuka_check_and_attach_component_styles($library_name, $variables);
+    }
+  }
+
+  // Check if sidebar region is set;if so, add has-isi-side-bar class to body.
+  if (isset($variables['page']['sidebar_right'])) {
+    $variables['attributes']['class'][] = Html::cleanCssIdentifier('has-isi-side-bar');
+  }
+
+  // Add theme path to drupalSettings.
+  $variables['#attached']['drupalSettings']['path']['themeUrl'] = Drupal::theme()
+    ->getActiveTheme()
+    ->getPath();
+}
+
+/**
+ * Implements hook_preprocess_page().
+ */
+function emulsify_preprocess_page(&$variables) {
+  if (isset($variables['page']['header_mobile'])) {
+    $headerMobile = $variables['page']['header_mobile'];
+    $variables['page']['header_mobile'] = [
+      'body' => $headerMobile,
+      'classes' => [],
+    ];
+  }
+
+  $node = \Drupal::request()->attributes->get('node');
+  if (!empty($node) && $node instanceof Node) {
+    // Check that library exists and attach.
+    $library_name = 'node.' . $node->getType();
+    _otsuka_check_and_attach_component_styles($library_name, $variables);
+  }
+
+  // Get theme settings.
+  $variables['#attached']['drupalSettings']['emulsify']['menu_behavior'] = theme_get_setting('menu_behavior', 'emulsify');
+  $variables['#attached']['drupalSettings']['emulsify']['menu_overflow'] = theme_get_setting('menu_overflow', 'emulsify');
+}
+
+/**
+ * Implements hook_preprocess_views_view().
+ */
+function emulsify_preprocess_views_view(&$variables) {
+  $view = $variables['view'];
+  $view_id = Html::getClass($view->id());
+  $view_machine_name = Html::getClass($view->current_display);
+  $library_names = [
+    "view.{$view_id}",
+    "view.{$view_id}--{$view_machine_name}",
+  ];
+
+  foreach ($library_names as $library_name) {
+    _otsuka_check_and_attach_component_styles($library_name, $variables);
+  }
+}
+
+/**
+ * Helper function to add styles.
+ */
+function _otsuka_check_and_attach_component_styles($library_name, &$variables, $theme_name = NULL) {
+  if (empty($theme_name)) {
+    $theme_name = \Drupal::service('theme.manager')
+      ->getActiveTheme()
+      ->getName();
+  }
+  $library_exists = \Drupal::service('library.discovery')
+    ->getLibraryByName($theme_name, $library_name);
+
+  if ($library_exists) {
+    $variables['#attached']['library'][] = $theme_name . '/' . $library_name;
+  }
+}
+
+/**
+ * Implements hook_theme_suggestions_alter().
+ */
+function emulsify_theme_suggestions_alter(array &$suggestions, array $variables, $hook) {
+  switch ($hook) {
+    case 'paragraph':
+      $paragraph = $variables['elements']['#paragraph'];
+
+      if ($paragraph->bundle() == 'otsk_ds_wrapper') {
+        $paragraph_type = $paragraph->getBehaviorSetting('type_paragraph', 'paragraph_type_options');
+        $suggestions[] = 'paragraph__' . $paragraph->bundle() . '__' . $paragraph_type;
+      }
+
+      $paragraphBehaviorsClasses = $paragraph->getBehaviorSetting('custom_id_classes_paragraph', 'custom_classes');
+      if (!empty($paragraphBehaviorsClasses)) {
+        foreach (explode(' ', $paragraphBehaviorsClasses) as $class) {
+          $suggestions[] = 'paragraph__' . $paragraph->bundle() . '__' . $class;
+        }
+      }
+
+      $paragraphBehaviorsTwigSuggestions = $paragraph->getBehaviorSetting('custom_twig_template_suggestions_paragraph', 'custom_suggestions');
+      if (!empty($paragraphBehaviorsTwigSuggestions)) {
+        foreach (explode(' ', $paragraphBehaviorsTwigSuggestions) as $customSuggestion) {
+          $suggestions[] = 'paragraph__' . $paragraph->bundle() . '__' . $customSuggestion;
+        }
+      }
+      break;
+  }
+}
+
+/**
+ * Implements hook_form_system_theme_settings_alter().
+ */
+function emulsify_form_system_theme_settings_alter(&$form, FormStateInterface $form_state) {
+  $form['menu'] = [
+    '#type' => 'details',
+    '#open' => TRUE,
+    '#title' => t('Menu'),
+  ];
+
+  $menuBehavior = theme_get_setting('menu_behavior', 'otsuka_design_system_theme');
+  $form['menu']['menu_behavior'] = [
+    '#type' => 'radios',
+    '#title' => t('Top menu behavior'),
+    '#options' => [
+      'Normal' => t('Normal, scrolls out of view until a user scrolls back to top'),
+      'Persistent' => t('Persistent, stays in view as user scrolls'),
+      'Sticky' => t('Sticky, scrolls out of view on scroll down, back in view on scroll up'),
+    ],
+    '#default_value' => $menuBehavior ? $menuBehavior : 'Normal',
+  ];
+
+  $menuOverflow = theme_get_setting('menu_overflow', 'otsuka_design_system_theme');
+  $form['menu']['menu_overflow'] = [
+    '#type' => 'radios',
+    '#title' => t('Top menu overflow'),
+    '#options' => [
+      'Yes' => t('Yes'),
+      'No' => t('No'),
+    ],
+    '#default_value' => $menuOverflow ? $menuOverflow : 'Yes',
+  ];
+}
+
+/**
+ * Implements hook_preprocess().
+ */
+function emulsify_preprocess(&$variables, $hook, $info) {
+  $variables['twig_debug_on'] = \Drupal::service('twig')->isDebug();
+}
+
+/**
+ * Implements hook_preprocess_menu_local_task().
+ */
+function emulsify_preprocess_menu_local_task(&$variables) {
+  $link = $variables['element']['#link'];
+  $url = $link['url'];
+  $options = $url->getOptions();
+  $url->setOptions($options + $link['localized_options']);
+  $variables['item'] = Link::fromTextAndUrl($link['title'], $url);
+}
+
+/**
+ * Implements hook_page_attachments_alter().
+ */
+function emulsify_page_attachments_alter(&$attachments) {
+  if (preg_match("/eu_cookie_compliance/is", var_export($attachments['#attached']['library'], TRUE))) {
+    $attachments['#attached']['library'][] = 'emulsify/block.eu-cookie-warning';
+  }
+}
+
+/**
+ * Implements hook_theme_suggestions_HOOK_alter().
+ */
+function emulsify_theme_suggestions_page_alter(array &$suggestions, array $variables) {
+  // Get Request Object.
+  $request = \Drupal::request();
+
+  // If there is HTTP Exception..
+  if ($exception = $request->attributes->get('exception')) {
+    // Get the status code.
+    $status_code = $exception->getStatusCode();
+    if (in_array($status_code, [401, 403, 404])) {
+      $suggestions[] = 'page__' . $status_code;
+    }
+  }
+}
+
+/**
+ * Returns TRUE if the page is 404 page node.
+ */
+function _is_404_page_node() {
+  // Check if current request is an exception to get error type.
+  $status = \Drupal::requestStack()->getCurrentRequest()->attributes->get('exception');
+
+  // Add body classes.
+  if ($status && $status->getStatusCode() == 404) {
+    return TRUE;
+  }
+
+  return FALSE;
+}

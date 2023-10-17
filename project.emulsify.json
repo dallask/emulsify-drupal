@@ -1,8 +1,8 @@
 {
   "project": {
     "platform": "drupal",
-    "name": "Emulsify Drupal",
-    "machineName": "emulsify-drupal-dallask"
+    "name": "OTSK DS Emulsify Drupal",
+    "machineName": "otsk_ds"
   },
   "starter": {
     "repository": "https://github.com/dallask/emulsify-drupal.git"

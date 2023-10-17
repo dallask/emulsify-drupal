@@ -3,6 +3,7 @@
 const fs = require('fs');
 const path = require('path');
 const yaml = require('js-yaml');
+const replace = require('replace-in-file');
 
 /**
  * Returns a boolean indicating whether or not the given object is a literal object.
@@ -140,6 +141,14 @@ const main = () => {
       from: '../emulsify.libraries.yml',
       to: `../${machineName}.libraries.yml`,
     },
+    {
+      from: '../emulsify.field_preprocessors.yml',
+      to: `../${machineName}.field_preprocessors.yml`,
+    },
+    {
+      from: '../emulsify.preprocessors.yml',
+      to: `../${machineName}.preprocessors.yml`,
+    },
   ]);
 
   // Update info.yml file.
@@ -163,6 +172,18 @@ const main = () => {
       return newBps;
     },
   );
+
+  // Replace strings inside files.
+  replace.sync({
+    files: [
+      path.join(__dirname, `../${machineName}.theme`),
+      path.join(__dirname, `../${machineName}.libraries.yml`),
+      path.join(__dirname, `../${machineName}.field_preprocessors.yml`),
+      path.join(__dirname, `../${machineName}.preprocessors.yml`),
+    ],
+    from: new RegExp('emulsify', 'g'),
+    to: machineName,
+  });
 };
 
 main();

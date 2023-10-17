@@ -43,6 +43,7 @@
     "normalize.css": "^8.0.1",
     "postcss-scss": "^4.0.6",
     "regenerator-runtime": "^0.13.11",
+    "replace-in-file": "^7.0.1",
     "stylelint-selector-bem-pattern": "^2.1.1",
     "twig-drupal-filters": "^3.2.0"
   },
